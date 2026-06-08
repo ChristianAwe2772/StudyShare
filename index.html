@@ -44,12 +44,12 @@
                     <button onclick="switchTab('tutor-hub')" id="nav-tutor-hub" class="nav-link text-sm font-bold text-slate-700 hover:text-purple-600 transition-colors flex items-center gap-1">
                         <i data-lucide="briefcase" class="w-4 h-4"></i> Tutor-Portal
                     </button>
-
+                    <!-- Cart Button 
                     <button onclick="openCart()" class="relative p-2 text-slate-500 hover:text-indigo-600 transition-colors ml-2">
                         <i data-lucide="shopping-cart" class="w-5 h-5"></i>
                         <span id="cart-badge" class="hidden absolute top-0 right-0 bg-emerald-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow-sm">0</span>
                     </button>
-
+                    -->
                     <div id="auth-logged-out" class="flex items-center space-x-3">
                         <button onclick="openAuth('login')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold px-4 py-2 rounded-xl text-xs transition">Login</button>
                         <button onclick="openAuth('register')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-4 py-2 rounded-xl text-xs transition shadow-md shadow-indigo-600/10">Registrieren</button>
@@ -76,24 +76,23 @@
             </div>
         </div>
 
-        <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-slate-100 px-4 pt-2 pb-6 space-y-3 shadow-lg fade-in">
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-slate-100 px-4 pt-2 pb-6 space-y-2 shadow-lg fade-in">
             <button onclick="switchTab('materials'); toggleMobileMenu();" class="block w-full text-left px-3 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 rounded-lg">Shop</button>
             <button onclick="switchTab('tutors'); toggleMobileMenu();" class="block w-full text-left px-3 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 rounded-lg">Video-Calls</button>
-            <button onclick="switchTab('social'); toggleMobileMenu();" class="block w-full text-left px-3 py-3 text-sm font-semibold text-emerald-600 hover:bg-emerald-50 rounded-lg flex items-center gap-2">
-                <i data-lucide="shield-check" class="w-5 h-5"></i> Soziales Engagement
-            </button>
+            <button onclick="switchTab('social'); toggleMobileMenu();" class="block w-full text-left px-3 py-3 text-sm font-semibold text-emerald-600 hover:bg-emerald-50 rounded-lg">Soziales Engagement</button>
+            <button onclick="switchTab('student-hub'); toggleMobileMenu();" class="block w-full text-left px-3 py-3 text-sm font-bold text-indigo-700 hover:bg-indigo-50 rounded-lg">Lernbereich</button>
+            <button onclick="switchTab('tutor-hub'); toggleMobileMenu();" class="block w-full text-left px-3 py-3 text-sm font-bold text-purple-700 hover:bg-purple-50 rounded-lg">Tutor-Portal</button>
+            
             <div class="pt-4 border-t border-slate-100 flex flex-col gap-3">
                 <div id="mobile-logged-out" class="flex flex-col gap-3">
                     <button onclick="openAuth('login'); toggleMobileMenu();" class="w-full text-center px-4 py-3 text-slate-600 font-semibold border border-slate-200 rounded-xl text-sm">Login</button>
                     <button onclick="openAuth('register'); toggleMobileMenu();" class="w-full text-center px-4 py-3 bg-indigo-600 text-white font-semibold rounded-xl text-sm shadow-md">Registrieren</button>
                 </div>
                 <div id="mobile-logged-in" class="hidden">
-                    <button onclick="handleLogout(); toggleMobileMenu();" class="w-full text-center px-4 py-3 text-red-600 font-semibold border border-slate-200 rounded-xl text-sm flex justify-center items-center gap-2">
-                        <i data-lucide="log-out" class="w-4 h-4"></i> Abmelden
-                    </button>
+                    <button onclick="handleLogout(); toggleMobileMenu();" class="w-full text-center px-4 py-3 text-red-600 font-semibold border border-slate-200 rounded-xl text-sm">Abmelden</button>
                 </div>
             </div>
-        </div>
+</div>
     </nav>
 
     <main class="flex-grow">

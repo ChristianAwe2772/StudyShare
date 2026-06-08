@@ -509,3 +509,35 @@ function showToast(title, message, type = 'success') {
     setTimeout(() => toast.classList.remove('translate-y-4', 'opacity-0'), 50);
     setTimeout(() => { toast.classList.add('translate-y-4', 'opacity-0'); setTimeout(() => toast.remove(), 300); }, 4000);
 }
+
+function selectRole(role) {
+    const sBtn = document.getElementById('btn-role-student');
+    const tBtn = document.getElementById('btn-role-tutor');
+    
+    if(role === 'student') {
+        sBtn.className = "border-2 border-indigo-600 bg-indigo-50 text-indigo-700 py-2.5 rounded-xl font-bold text-xs transition-colors";
+        tBtn.className = "border border-slate-200 text-slate-500 py-2.5 rounded-xl font-semibold text-xs hover:bg-slate-50 transition-colors";
+    } else {
+        tBtn.className = "border-2 border-indigo-600 bg-indigo-50 text-indigo-700 py-2.5 rounded-xl font-bold text-xs transition-colors";
+        sBtn.className = "border border-slate-200 text-slate-500 py-2.5 rounded-xl font-semibold text-xs hover:bg-slate-50 transition-colors";
+    }
+}
+
+function toggleMobileMenu() {
+    const menu = document.getElementById('mobile-menu');
+    const icon = document.getElementById('mobile-menu-icon');
+    
+    if (menu) {
+        menu.classList.toggle('hidden');
+    }
+    
+    // Optional: Icon wechseln (falls du X statt Menü anzeigen willst)
+    if (icon) {
+        if (!menu.classList.contains('hidden')) {
+            icon.setAttribute('data-lucide', 'x');
+        } else {
+            icon.setAttribute('data-lucide', 'menu');
+        }
+        lucide.createIcons(); // Icons neu rendern
+    }
+}
