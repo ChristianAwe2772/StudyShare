@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyShare - Kooperative Nachhilfeplattform</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans">
+
+    <nav class="bg-white/80 backdrop-blur-md border-b border-slate-100 sticky top-0 z-40 shadow-sm transition-all">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-20">
+            
+            <div class="flex items-center gap-2 cursor-pointer" onclick="switchTab('home')">
+                <div class="bg-gradient-to-tr from-indigo-600 to-indigo-800 text-white p-2.5 rounded-xl font-bold text-xl shadow-lg shadow-indigo-500/30">
+                    <i data-lucide="graduation-cap" class="w-6 h-6"></i>
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-extrabold text-xl tracking-tight text-slate-900 leading-none">Study<span class="text-indigo-600">Share</span></span>
+                    <span class="text-[9px] tracking-widest uppercase font-semibold text-slate-400">Social EdTech</span>
+                </div>
+            </div>
+            
+            <div class="hidden md:flex items-center space-x-6">
+                <button onclick="switchTab('materials')" id="nav-materials" class="nav-link text-sm font-semibold text-slate-500 hover:text-indigo-600 transition-colors">Shop</button>
+                <button onclick="switchTab('tutors')" id="nav-tutors" class="nav-link text-sm font-semibold text-slate-500 hover:text-indigo-600 transition-colors">Video-Calls</button>
+                <button onclick="switchTab('social')" id="nav-social" class="nav-link text-sm font-semibold text-slate-500 hover:text-emerald-600 flex items-center gap-1 transition-colors">
+                    <i data-lucide="shield-check" class="w-4 h-4"></i> Soziales
+                </button>
+                
+                <div class="flex items-center space-x-4 ml-2 pl-4 border-l border-slate-200">
+                    <button onclick="switchTab('student-hub')" id="nav-student-hub" class="nav-link text-sm font-bold text-slate-700 hover:text-indigo-600 transition-colors flex items-center gap-1">
+                        <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Lernbereich
+                    </button>
+                    <button onclick="switchTab('tutor-hub')" id="nav-tutor-hub" class="nav-link text-sm font-bold text-slate-700 hover:text-purple-600 transition-colors flex items-center gap-1">
+                        <i data-lucide="briefcase" class="w-4 h-4"></i> Tutor-Portal
+                    </button>
+
+                    <button onclick="openCart()" class="relative p-2 text-slate-500 hover:text-indigo-600 transition-colors ml-2">
+                        <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+                        <span id="cart-badge" class="hidden absolute top-0 right-0 bg-emerald-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow-sm">0</span>
+                    </button>
+
+                    <div id="auth-logged-out" class="flex items-center space-x-3">
+                        <button onclick="openAuth('login')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold px-4 py-2 rounded-xl text-xs transition">Login</button>
+                        <button onclick="openAuth('register')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-4 py-2 rounded-xl text-xs transition shadow-md shadow-indigo-600/10">Registrieren</button>
+                    </div>
+                    <div id="auth-logged-in" class="hidden flex items-center gap-4">
+                        <div class="flex items-center gap-2 text-xs font-bold text-slate-700 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200">
+                            <i data-lucide="user" class="w-4 h-4"></i> Profil
+                        </div>
+                        <button onclick="handleLogout()" class="text-slate-400 hover:text-red-500 transition-colors" title="Abmelden">
+                            <i data-lucide="log-out" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="md:hidden flex items-center gap-4">
+                <button onclick="openCart()" class="relative p-2 text-slate-500 hover:text-slate-900 transition-colors">
+                    <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+                    <span id="mobile-cart-badge" class="hidden absolute top-0 right-0 bg-emerald-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">0</span>
+                </button>
+                <button onclick="toggleMobileMenu()" class="text-slate-500 hover:text-slate-900">
+                    <i data-lucide="menu" id="mobile-menu-icon" class="h-6 w-6"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-slate-100 px-4 pt-2 pb-6 space-y-3 shadow-lg fade-in">
+            <button onclick="switchTab('materials'); toggleMobileMenu();" class="block w-full text-left px-3 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 rounded-lg">Shop</button>
+            <button onclick="switchTab('tutors'); toggleMobileMenu();" class="block w-full text-left px-3 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 rounded-lg">Video-Calls</button>
+            <button onclick="switchTab('social'); toggleMobileMenu();" class="block w-full text-left px-3 py-3 text-sm font-semibold text-emerald-600 hover:bg-emerald-50 rounded-lg flex items-center gap-2">
+                <i data-lucide="shield-check" class="w-5 h-5"></i> Soziales Engagement
+            </button>
+            <div class="pt-4 border-t border-slate-100 flex flex-col gap-3">
+                <div id="mobile-logged-out" class="flex flex-col gap-3">
+                    <button onclick="openAuth('login'); toggleMobileMenu();" class="w-full text-center px-4 py-3 text-slate-600 font-semibold border border-slate-200 rounded-xl text-sm">Login</button>
+                    <button onclick="openAuth('register'); toggleMobileMenu();" class="w-full text-center px-4 py-3 bg-indigo-600 text-white font-semibold rounded-xl text-sm shadow-md">Registrieren</button>
+                </div>
+                <div id="mobile-logged-in" class="hidden">
+                    <button onclick="handleLogout(); toggleMobileMenu();" class="w-full text-center px-4 py-3 text-red-600 font-semibold border border-slate-200 rounded-xl text-sm flex justify-center items-center gap-2">
+                        <i data-lucide="log-out" class="w-4 h-4"></i> Abmelden
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow">
+
+        <div id="tab-home" class="tab-content active animate-fadeIn">
+            <header class="relative bg-gradient-to-b from-white to-slate-50 overflow-hidden py-16 lg:py-24 border-b border-slate-100">
+                <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-12 gap-12 items-center">
+                    <div class="lg:col-span-7 space-y-6">
+                        <span class="inline-flex items-center gap-1.5 py-1.5 px-3.5 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                            <i data-lucide="heart" class="w-3.5 h-3.5 text-indigo-600 animate-pulse"></i> Bildungsgerechtigkeit neu gedacht
+                        </span>
+                        <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight text-slate-900 leading-tight">
+                            Kostenlose Schulnachhilfe gefördert durch <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-indigo-800">Premium-Lernen</span>
+                        </h1>
+                        <p class="text-base sm:text-lg text-slate-600 leading-relaxed max-w-2xl">
+                            Wir schlagen die Brücke: Studierende geben Schülern an staatlichen Schulen kostenlose Nachhilfe vor Ort und erhalten dafür wertvolle Credit Points (ECTS). Für individuelles Lernen zu Hause bieten wir skalierbare Premium-Lernsets und flexible 1:1 Video-Calls.
+                        </p>
+                        <div class="pt-4 flex flex-col sm:flex-row gap-4">
+                            <button onclick="switchTab('materials')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-8 py-4 rounded-2xl transition shadow-lg shadow-indigo-600/20 flex items-center justify-center gap-2 group">
+                                Lernsets durchsuchen 
+                                <i data-lucide="arrow-right" class="w-5 h-5 group-hover:translate-x-1 transition-transform"></i>
+                            </button>
+                            <button onclick="switchTab('social')" class="bg-white hover:bg-slate-50 text-slate-800 font-semibold px-8 py-4 rounded-2xl transition border border-slate-200 flex items-center justify-center gap-2">
+                                <i data-lucide="shield-check" class="w-5 h-5 text-emerald-600"></i> Zum sozialen Projekt
+                            </button>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-5 relative flex justify-center">
+                        <div class="relative w-full max-w-md">
+                            <div class="absolute -inset-1 rounded-3xl bg-gradient-to-r from-indigo-500 to-purple-500 opacity-20 blur-xl"></div>
+                            <div class="relative bg-white border border-slate-100 rounded-3xl shadow-2xl p-6">
+                                <div class="flex items-center gap-4 border-b border-slate-100 pb-4 mb-4">
+                                    <div class="bg-indigo-50 p-2.5 rounded-xl text-indigo-600">
+                                        <i data-lucide="sparkles" class="w-6 h-6"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-slate-900">Der StudyShare-Kreislauf</h4>
+                                        <p class="text-xs text-slate-500">Win-Win-Szenario für alle Beteiligten</p>
+                                    </div>
+                                </div>
+                                <div class="space-y-4">
+                                    <div class="flex items-start gap-3">
+                                        <div class="bg-indigo-100 text-indigo-700 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold mt-0.5">1</div>
+                                        <p class="text-xs text-slate-600"><strong>Schulen:</strong> Erhalten kostenlose, qualifizierte Studierende als Tutoren für Nachmittags-AGs.</p>
+                                    </div>
+                                    <div class="flex items-start gap-3">
+                                        <div class="bg-emerald-100 text-emerald-700 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold mt-0.5">2</div>
+                                        <p class="text-xs text-slate-600"><strong>Studierende:</strong> Bekommen offizielle Credit Points (ECTS) für soziales Engagement an ihrer Hochschule gutgeschrieben.</p>
+                                    </div>
+                                    <div class="flex items-start gap-3">
+                                        <div class="bg-purple-100 text-purple-700 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold mt-0.5">3</div>
+                                        <p class="text-xs text-slate-600"><strong>Plattform-Umsatz:</strong> Skalierbarer Verkauf von erstklassigen Lernsets und Premium Video-Calls quersubventioniert das System.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <section class="py-20 max-w-7xl mx-auto px-6">
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <span class="text-xs font-extrabold uppercase tracking-widest text-indigo-600">Drei starke Säulen</span>
+                    <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 mt-2">Ein ausbalanciertes Ökosystem</h2>
+                    <p class="mt-4 text-slate-600">Wir revolutionieren die Monetarisierung im sozialen Bildungssektor.</p>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between hover:shadow-md transition cursor-pointer" onclick="switchTab('social')">
+                        <div>
+                            <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-6">
+                                <i data-lucide="school" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-900 mb-2">1. Kostenlos an Schulen</h3>
+                            <p class="text-slate-600 text-sm leading-relaxed mb-4">Gezielte und kostenlose Förderung direkt vor Ort in staatlichen Schulen. Keine finanzielle Barriere für bedürftige Familien.</p>
+                        </div>
+                        <div class="pt-4 border-t border-slate-50 flex items-center gap-2">
+                            <span class="text-xs font-bold bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full">Universitär zertifiziert</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-8 rounded-3xl border border-indigo-100 shadow-sm flex flex-col justify-between relative ring-2 ring-indigo-600/10 hover:shadow-md transition cursor-pointer" onclick="switchTab('materials')">
+                        <span class="absolute -top-3 right-6 bg-indigo-600 text-white text-[10px] uppercase font-extrabold tracking-wider py-1 px-3 rounded-full">Skalierbar</span>
+                        <div>
+                            <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-6">
+                                <i data-lucide="book-open" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-900 mb-2">2. Digitale Lernsets</h3>
+                            <p class="text-slate-600 text-sm leading-relaxed mb-4">Professionell gestaltete digitale Inhalte (Karteikarten, Zusammenfassungen) von Top-Studierenden für gezielte Vorbereitungen zu Hause.</p>
+                        </div>
+                        <div class="pt-4 border-t border-slate-50 flex items-center justify-between text-xs text-slate-500">
+                            <span>Einmalkauf im Shop</span>
+                            <span class="font-bold text-indigo-600 text-sm">Ab 2,50 €</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between hover:shadow-md transition cursor-pointer" onclick="switchTab('tutors')">
+                        <div>
+                            <div class="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center mb-6">
+                                <i data-lucide="phone-call" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-900 mb-2">3. Premium 1:1 Video-Calls</h3>
+                            <p class="text-slate-600 text-sm leading-relaxed mb-4">Integrierte Live-Hilfe per Web-Call. Bei dringenden Fragen oder Hausaufgabenproblemen am Abend sind Tutoren für dich da.</p>
+                        </div>
+                        <div class="pt-4 border-t border-slate-50 flex items-center justify-between text-xs text-slate-500">
+                            <span>Direkte Buchung</span>
+                            <span class="font-bold text-purple-600 text-sm">~ 15,00 € / Std</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="bg-slate-900 text-white py-16">
+                <div class="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                    <div>
+                        <p class="text-4xl font-extrabold text-indigo-400">12.400+</p>
+                        <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold mt-1">Kostenlose Nachhilfestunden</p>
+                    </div>
+                    <div>
+                        <p class="text-4xl font-extrabold text-indigo-400">840+</p>
+                        <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold mt-1">Registrierte Studierende</p>
+                    </div>
+                    <div>
+                        <p class="text-4xl font-extrabold text-indigo-400">15+</p>
+                        <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold mt-1">Partner-Universitäten</p>
+                    </div>
+                    <div>
+                        <p class="text-4xl font-extrabold text-indigo-400">98,2%</p>
+                        <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold mt-1">Zufriedenheitsquote</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div id="tab-materials" class="tab-content hidden animate-slideIn py-8 md:py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 border-b border-slate-200 pb-6 mb-8">
+                <div>
+                    <h2 class="text-3xl font-bold text-slate-900 mb-2">Premium Lernmaterialien</h2>
+                    <p class="text-slate-600 text-sm">Hochwertige Zusammenfassungen von Studenten für deinen Erfolg. Unterstütze das System.</p>
+                </div>
+                <div class="relative w-full md:w-72">
+                    <input type="text" placeholder="Suchen nach Fach..." class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-600 bg-white shadow-sm text-sm" />
+                    <i data-lucide="search" class="absolute left-3 top-3.5 h-5 w-5 text-slate-400"></i>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="materials-grid">
+                </div>
+        </div>
+
+        <div id="tab-tutors" class="tab-content hidden animate-slideIn py-8 md:py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-indigo-50 rounded-3xl p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-8 mb-8 border border-indigo-100">
+                <div class="max-w-xl">
+                    <h2 class="text-3xl font-bold text-indigo-900 mb-4">Live 1:1 Video-Nachhilfe</h2>
+                    <p class="text-indigo-700 text-sm leading-relaxed">Buche flexible 45-Minuten Sessions mit erfahrenen Studenten. Perfekt vor Klausuren oder bei spezifischen Hausaufgabenproblemen.</p>
+                </div>
+                <div class="bg-white p-4 rounded-2xl shadow-sm flex items-center gap-4 min-w-[250px]">
+                    <div class="bg-purple-600 p-3 rounded-xl text-white shadow-md shadow-purple-600/20"><i data-lucide="video" class="w-8 h-8"></i></div>
+                    <div>
+                        <p class="font-bold text-slate-900 text-sm">Integrierter Webcall</p>
+                        <p class="text-xs text-slate-500">Kein Download erforderlich</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="tutors-grid">
+                </div>
+        </div>
+
+        <div id="tab-social" class="tab-content hidden animate-slideIn py-8 md:py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-emerald-50 border border-emerald-100 rounded-3xl p-8 md:p-12 relative overflow-hidden mb-10">
+                <div class="relative z-10 max-w-2xl space-y-6">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white text-emerald-700 text-xs font-bold shadow-sm border border-emerald-100">
+                        <i data-lucide="heart-handshake" class="w-4 h-4"></i> Initiative: Bildung für alle
+                    </div>
+                    <h2 class="text-3xl md:text-4xl font-extrabold text-emerald-900 tracking-tight">Kostenlose Einsätze vor Ort</h2>
+                    <p class="text-sm text-emerald-800 leading-relaxed max-w-xl">
+                        Unser Bereich für soziales Engagement. Hier posten Universitäts-Tutoren ehrenamtliche Nachhilfe-Angebote an lokalen Schulen, für die sie ECTS-Punkte erhalten. 
+                    </p>
+                    <div class="flex items-center gap-3 bg-white/90 backdrop-blur-sm p-4 rounded-xl border border-emerald-100 inline-flex shadow-sm">
+                        <i data-lucide="shield-check" class="w-6 h-6 text-emerald-600"></i>
+                        <span class="text-xs font-bold text-emerald-900">Die Buchung dieser Angebote ist kostenfrei für Schüler mit berechtigtem Sozialausweis.</span>
+                    </div>
+                </div>
+                <i data-lucide="heart-handshake" class="absolute -right-10 -bottom-10 w-64 h-64 text-emerald-200 opacity-50 z-0 transform rotate-12"></i>
+            </div>
+
+            <div class="bg-white p-2 rounded-2xl inline-flex border border-slate-200 shadow-sm mx-auto md:mx-0 mb-8">
+                <button onclick="switchSocialView('grid')" id="btn-view-grid" class="view-btn flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-colors bg-emerald-50 text-emerald-700">
+                    <i data-lucide="layout-grid" class="w-4 h-4"></i> Karten
+                </button>
+                <button onclick="switchSocialView('list')" id="btn-view-list" class="view-btn flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-colors text-slate-500 hover:text-slate-800">
+                    <i data-lucide="list" class="w-4 h-4"></i> Liste
+                </button>
+                <button onclick="switchSocialView('pinboard')" id="btn-view-pinboard" class="view-btn flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-colors text-slate-500 hover:text-slate-800">
+                    <i data-lucide="pin" class="w-4 h-4"></i> Pinnwand
+                </button>
+            </div>
+
+            <div id="social-view-grid" class="social-view animate-fadeIn">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6" id="social-grid-container"></div>
+            </div>
+
+            <div id="social-view-list" class="social-view hidden animate-fadeIn">
+                <div class="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-sm" id="social-list-container"></div>
+            </div>
+
+            <div id="social-view-pinboard" class="social-view hidden animate-fadeIn bg-slate-100 p-8 rounded-[3rem] border border-slate-200">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="social-pinboard-container"></div>
+            </div>
+            
+            <div class="bg-white rounded-3xl p-8 border border-slate-200 mt-12 shadow-sm">
+                <h3 class="font-bold text-lg mb-6 text-center text-slate-900">Wie funktioniert die kostenlose Teilnahme?</h3>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="text-center space-y-3">
+                        <div class="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center font-bold text-slate-500 mx-auto shadow-inner border border-slate-200">1</div>
+                        <p class="text-xs text-slate-600">Eltern registrieren sich und das Kind auf der StudyShare Plattform.</p>
+                    </div>
+                    <div class="text-center space-y-3">
+                        <div class="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center font-bold text-slate-500 mx-auto shadow-inner border border-slate-200">2</div>
+                        <p class="text-xs text-slate-600">Gültigen Sozialausweis oder Bildungskarte im Profil sicher hochladen.</p>
+                    </div>
+                    <div class="text-center space-y-3">
+                        <div class="w-10 h-10 bg-emerald-600 text-white rounded-full flex items-center justify-center font-bold mx-auto shadow-md shadow-emerald-600/20"><i data-lucide="check-circle" class="w-5 h-5"></i></div>
+                        <p class="text-xs text-slate-600">Zugang zu den Vor-Ort-Ankündigungen wird dauerhaft freigeschaltet.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-student-hub" class="tab-content hidden animate-slideIn py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-slate-100 rounded-3xl p-6 md:p-8 border border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-900">Willkommen im Lernbereich, Max!</h1>
+                    <p class="text-sm text-slate-500 mt-1">Deine gekauften Lernsets und anstehenden Nachhilfe-Termine.</p>
+                </div>
+                <div class="flex items-center gap-4 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm w-full md:w-auto">
+                    <div class="flex-1">
+                        <span class="text-[10px] text-slate-400 block font-bold uppercase tracking-wider">Verfügbares Budget</span>
+                        <span class="font-extrabold text-2xl text-emerald-600" id="schueler-budget-display">35,00 €</span>
+                    </div>
+                    <button onclick="openDepositModal()" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-4 py-3 rounded-xl transition flex items-center gap-1.5 shadow-md">
+                        <i data-lucide="plus" class="w-4 h-4"></i> Aufladen
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 space-y-8">
+                    <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                                <i data-lucide="book-open-check" class="text-indigo-600 w-5 h-5"></i> Meine Bibliothek (<span id="library-count">0</span>)
+                            </h3>
+                            <button onclick="switchTab('materials')" class="text-xs font-bold text-indigo-600 hover:text-indigo-800">Zum Shop &rarr;</button>
+                        </div>
+                        
+                        <div id="library-empty-state" class="text-center py-10 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                            <i data-lucide="library" class="w-10 h-10 text-slate-300 mx-auto mb-3"></i>
+                            <p class="text-sm text-slate-500 font-medium">Du hast noch keine Lernsets freigeschaltet.</p>
+                        </div>
+                        
+                        <div id="library-grid" class="grid sm:grid-cols-2 gap-4 hidden">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="bg-gradient-to-br from-emerald-50 to-teal-50 p-6 rounded-3xl border border-emerald-100 shadow-sm">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <span class="bg-emerald-200 text-emerald-800 text-[9px] uppercase font-extrabold tracking-wider px-2.5 py-1 rounded-md block w-max mb-3">Kostenloses Sozial-Programm</span>
+                                <h3 class="text-lg font-bold text-emerald-950 leading-tight">Nächste Förderstunde</h3>
+                                <p class="text-xs text-emerald-700 font-bold mt-1.5">Morgen, 14:00 - 15:30 Uhr</p>
+                            </div>
+                            <div class="bg-emerald-500 text-white p-2.5 rounded-xl shadow-sm">
+                                <i data-lucide="calendar" class="w-5 h-5"></i>
+                            </div>
+                        </div>
+                        <div class="bg-white/60 p-3 rounded-xl text-xs text-emerald-900 leading-relaxed border border-emerald-200/50">
+                            Dein Tutor <strong>Felix (Mathematik, Uni Köln)</strong> betreut dich in Raum 204. Völlig kostenfrei durch das StudyShare ECTS-Programm!
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-tutor-hub" class="tab-content hidden animate-slideIn py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-slate-900 text-white rounded-3xl p-6 md:p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8 shadow-lg">
+                <div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="bg-emerald-500 text-emerald-950 text-[10px] font-extrabold px-2.5 py-1 rounded-md uppercase tracking-wider">Verifizierter Tutor</span>
+                        <span class="text-xs text-slate-400 font-medium">Universität zu Köln</span>
+                    </div>
+                    <h1 class="text-2xl font-bold">Hallo Jonas!</h1>
+                    <p class="text-sm text-slate-400 mt-1">Verwalte deine ECTS-Stunden und kommerziellen Einnahmen.</p>
+                </div>
+                <div class="bg-white/10 p-4 rounded-2xl border border-white/10 min-w-[200px]">
+                    <span class="text-[10px] text-slate-300 block font-bold uppercase tracking-wider">Premium Auszahlung</span>
+                    <span class="font-extrabold text-3xl text-white" id="student-payout-display">63,15 €</span>
+                </div>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="grid sm:grid-cols-3 gap-4">
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 flex flex-col justify-between shadow-sm">
+                            <div>
+                                <span class="text-[9px] uppercase font-bold text-emerald-600 bg-emerald-50 border border-emerald-100 px-2 py-1 rounded-md block w-max">Gemeinnützig</span>
+                                <h4 class="text-xs font-bold text-slate-500 mt-3">Schul-Einsätze</h4>
+                                <p class="text-2xl font-black text-slate-900 mt-1" id="tutor-stats-hours">18 <span class="text-sm font-medium text-slate-400">/ 30 Std.</span></p>
+                            </div>
+                            <div class="w-full bg-slate-100 h-2 rounded-full mt-4 overflow-hidden">
+                                <div class="bg-emerald-500 h-2 w-[60%]" id="tutor-hours-bar"></div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 flex flex-col justify-between shadow-sm">
+                            <div>
+                                <span class="text-[9px] uppercase font-bold text-indigo-600 bg-indigo-50 border border-indigo-100 px-2 py-1 rounded-md block w-max">Shop-Verkäufe</span>
+                                <h4 class="text-xs font-bold text-slate-500 mt-3">Skalierter Gewinn</h4>
+                                <p class="text-2xl font-black text-slate-900 mt-1" id="tutor-stats-sets">44,95 €</p>
+                            </div>
+                            <div class="text-[10px] text-indigo-600 font-bold mt-4 flex items-center gap-1"><i data-lucide="trending-up" class="w-3 h-3"></i> 100% Marge</div>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 flex flex-col justify-between shadow-sm">
+                            <div>
+                                <span class="text-[9px] uppercase font-bold text-purple-600 bg-purple-50 border border-purple-100 px-2 py-1 rounded-md block w-max">Live-Calls</span>
+                                <h4 class="text-xs font-bold text-slate-500 mt-3">Dienstleistung</h4>
+                                <p class="text-2xl font-black text-slate-900 mt-1" id="tutor-stats-calls">18,20 €</p>
+                            </div>
+                            <div class="text-[10px] text-purple-600 font-bold mt-4">70% Netto (30% Spende)</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm">
+                        <h3 class="text-lg font-bold text-slate-900 mb-2 flex items-center gap-2">
+                            <i data-lucide="plus-circle" class="text-indigo-600 w-5 h-5"></i> Neues Premium-Lernset erstellen
+                        </h3>
+                        <p class="text-xs text-slate-500 mb-6">Nach Veröffentlichung erscheint es sofort im globalen Shop.</p>
+                        
+                        <form id="creator-form" onsubmit="createLernset(event)" class="space-y-5">
+                            <div class="grid sm:grid-cols-2 gap-5">
+                                <div>
+                                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5">Set-Titel</label>
+                                    <input type="text" id="creator-title" required placeholder="z.B. Integralrechnung leicht gemacht" class="w-full text-sm border border-slate-200 px-4 py-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5">Fachbereich</label>
+                                    <select id="creator-subject" class="w-full text-sm border border-slate-200 px-4 py-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50">
+                                        <option value="Mathematik">Mathematik</option>
+                                        <option value="Physik">Physik</option>
+                                        <option value="Englisch">Englisch</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="grid sm:grid-cols-2 gap-5">
+                                <div>
+                                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5">Klassenstufe / Typ</label>
+                                    <input type="text" id="creator-grade" required placeholder="z.B. PDF / Karteikarten" class="w-full text-sm border border-slate-200 px-4 py-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5">Preis (€)</label>
+                                    <input type="number" step="0.01" id="creator-price" required placeholder="z.B. 4.99" class="w-full text-sm border border-slate-200 px-4 py-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5">Inhalt (inkl. LaTeX-Formeln $f(x)$)</label>
+                                <textarea id="creator-content" rows="4" required placeholder="Schreibe deinen Text. Er wird den Käufern in der Bibliothek angezeigt..." class="w-full text-sm border border-slate-200 px-4 py-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50"></textarea>
+                            </div>
+                            <button type="submit" class="bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm px-6 py-3.5 rounded-xl transition shadow-md w-full sm:w-auto">
+                                Kostenpflichtig veröffentlichen
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+                        <h3 class="text-base font-bold text-slate-900 mb-1 flex items-center gap-1.5">
+                            <i data-lucide="shield-check" class="text-emerald-600 w-5 h-5"></i> Schulstunde einreichen
+                        </h3>
+                        <p class="text-xs text-slate-500 mb-5">Lade deine geleistete Nachhilfestunde für den ECTS-Nachweis hoch.</p>
+                        
+                        <form onsubmit="logSchoolHour(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Schule</label>
+                                <input type="text" id="log-school" required placeholder="z.B. Schiller-Gymnasium" class="w-full text-sm border border-slate-200 px-3 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-slate-50">
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Dauer (Std.)</label>
+                                    <input type="number" id="log-duration" required min="1" max="6" value="2" class="w-full text-sm border border-slate-200 px-3 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-slate-50">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Klasse</label>
+                                    <input type="text" id="log-class" required placeholder="z.B. 10b" class="w-full text-sm border border-slate-200 px-3 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-slate-50">
+                                </div>
+                            </div>
+                            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-3 rounded-xl transition shadow-md shadow-emerald-600/20">
+                                Stunde verifizieren lassen
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+                        <h4 class="font-bold text-sm text-slate-900 mb-4">Deine jüngsten Aktivitäten</h4>
+                        <div class="space-y-4 text-xs" id="tutor-activity-log">
+                            <div class="flex justify-between items-start border-b border-slate-100 pb-3">
+                                <div>
+                                    <p class="font-bold text-slate-800 text-sm">2 Std. Nachhilfe</p>
+                                    <p class="text-[10px] text-slate-500 mt-0.5">Königin-Luise-Schule</p>
+                                </div>
+                                <span class="bg-emerald-50 text-emerald-700 font-bold px-2 py-1 rounded-md text-[10px] border border-emerald-100">Bestätigt</span>
+                            </div>
+                            <div class="flex justify-between items-start border-b border-slate-100 pb-3">
+                                <div>
+                                    <p class="font-bold text-slate-800 text-sm">Verkauf: "Abitur-Analysis"</p>
+                                    <p class="text-[10px] text-slate-500 mt-0.5">Käufer: Max M.</p>
+                                </div>
+                                <span class="text-indigo-600 font-bold text-xs bg-indigo-50 px-2 py-1 rounded-md">+ 4,99 €</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="bg-white border-t border-slate-100 py-10 mt-auto">
+        <div class="max-w-7xl mx-auto px-6 text-center space-y-4">
+            <div class="flex justify-center items-center gap-2">
+                <span class="bg-indigo-600 text-white p-1.5 rounded-lg font-bold text-sm shadow-sm"><i data-lucide="graduation-cap" class="w-5 h-5"></i></span>
+                <span class="font-bold text-slate-900">StudyShare</span>
+            </div>
+            <p class="text-xs text-slate-400 max-w-md mx-auto leading-relaxed">
+                StudyShare ist ein innovatives Konzept zur Verknüpfung von universitärer Lehre, sozialer Verantwortung und nachhaltiger, digitaler Monetarisierung.
+            </p>
+            <p class="text-[10px] text-slate-300 font-medium">&copy; 2026 StudyShare GmbH i.Gr. Alle Rechte vorbehalten.</p>
+        </div>
+    </footer>
+
+    <div id="lernset-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-2xl rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[85vh] animate-slideIn">
+            <div class="bg-slate-900 text-white p-6 flex justify-between items-center">
+                <div>
+                    <span id="modal-subject" class="bg-indigo-500 text-white text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-md mb-2 block w-max">Fach</span>
+                    <h3 id="modal-title" class="text-xl font-bold">Titel des Lernsets</h3>
+                </div>
+                <button onclick="closeLernsetModal()" class="text-slate-400 hover:text-white transition">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto space-y-4" id="modal-content-body">
+            </div>
+            <div class="bg-slate-50 p-4 border-t border-slate-100 flex justify-end">
+                <button onclick="closeLernsetModal()" class="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-6 py-3 rounded-xl transition">Schließen</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="deposit-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-3xl overflow-hidden shadow-2xl p-6 animate-slideIn">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-slate-900">Budget aufladen</h3>
+                <button onclick="closeDepositModal()" class="text-slate-400 hover:text-slate-600 transition">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <p class="text-xs text-slate-500 mb-6">Füge Guthaben hinzu, um den Bezahlkreislauf zu testen.</p>
+            
+            <div class="grid grid-cols-3 gap-3 mb-6">
+                <button onclick="simulateDeposit(10)" class="bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 py-3 rounded-xl font-bold text-sm transition text-slate-700 hover:text-indigo-700">+ 10 €</button>
+                <button onclick="simulateDeposit(20)" class="bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 py-3 rounded-xl font-bold text-sm transition text-slate-700 hover:text-indigo-700">+ 20 €</button>
+                <button onclick="simulateDeposit(50)" class="bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 py-3 rounded-xl font-bold text-sm transition text-slate-700 hover:text-indigo-700">+ 50 €</button>
+            </div>
+            <button onclick="closeDepositModal()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-xl transition text-xs">Abbrechen</button>
+        </div>
+    </div>
+
+    <div id="video-call-modal" class="fixed inset-0 bg-slate-950 z-50 hidden flex flex-col">
+        <div class="bg-black/40 text-white px-6 py-4 flex justify-between items-center z-10 border-b border-white/10">
+            <div class="flex items-center gap-3">
+                <div class="bg-purple-600 text-white p-2.5 rounded-xl shadow-md"><i data-lucide="video" class="w-5 h-5"></i></div>
+                <div>
+                    <h4 class="font-bold text-sm" id="call-tutor-name">Tutor Name</h4>
+                    <p class="text-[10px] text-emerald-400 font-medium">Verbindung gesichert & verschlüsselt</p>
+                </div>
+            </div>
+            <div class="text-right bg-slate-900/50 px-4 py-2 rounded-xl border border-white/5">
+                <span class="text-[10px] text-slate-400 block font-bold uppercase tracking-wider">Aktuelle Gebühr</span>
+                <span class="font-extrabold text-purple-400 text-lg" id="call-live-cost">0,00 €</span>
+            </div>
+        </div>
+
+        <div class="flex-grow grid md:grid-cols-2 gap-4 p-6 items-center">
+            <div class="bg-slate-900 h-full max-h-[60vh] rounded-3xl overflow-hidden border border-slate-800 relative flex items-center justify-center">
+                <div class="absolute inset-0 bg-gradient-to-tr from-purple-900/40 to-indigo-900/40"></div>
+                <div class="z-10 text-center space-y-4">
+                    <div class="w-24 h-24 rounded-full bg-indigo-500 mx-auto flex items-center justify-center text-white font-bold text-3xl animate-pulse shadow-lg shadow-indigo-500/30">
+                        <i data-lucide="user" class="w-12 h-12"></i>
+                    </div>
+                    <p class="text-white font-bold text-lg" id="call-tutor-label">Tutor</p>
+                    <span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs px-3 py-1 rounded-full font-medium">Kamera aktiv</span>
+                </div>
+            </div>
+
+            <div class="bg-slate-900 h-full max-h-[60vh] rounded-3xl overflow-hidden border border-slate-800 relative flex items-center justify-center">
+                <div class="z-10 text-center space-y-4">
+                    <div class="w-20 h-20 rounded-full bg-slate-800 mx-auto flex items-center justify-center text-slate-500"><i data-lucide="video-off" class="w-10 h-10"></i></div>
+                    <p class="text-slate-400 font-semibold text-sm">Deine Kamera ist aus</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-black/80 py-6 text-center space-y-4 z-10 border-t border-white/5">
+            <div class="text-white font-mono text-3xl tracking-widest font-bold" id="call-timer">00:00</div>
+            <div class="flex justify-center items-center gap-4">
+                <button class="bg-white/10 hover:bg-white/20 text-white p-4 rounded-full transition"><i data-lucide="mic-off" class="w-6 h-6"></i></button>
+                <button onclick="terminateCall()" class="bg-red-600 hover:bg-red-700 text-white font-bold px-8 py-4 rounded-full shadow-lg shadow-red-600/20 transition flex items-center gap-2">
+                    <i data-lucide="phone-off" class="w-5 h-5"></i> Auflegen
+                </button>
+                <button class="bg-white/10 hover:bg-white/20 text-white p-4 rounded-full transition"><i data-lucide="settings" class="w-6 h-6"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <div id="cart-drawer" class="fixed inset-0 z-50 overflow-hidden hidden">
+        <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" onclick="closeCart()"></div>
+        <div class="absolute inset-y-0 right-0 max-w-full flex">
+            <div id="cart-panel" class="w-screen max-w-md transform transition ease-in-out duration-500 translate-x-full bg-white shadow-2xl flex flex-col">
+                <div class="px-6 py-6 border-b border-slate-100 flex items-center justify-between">
+                    <h2 class="text-lg font-bold flex items-center gap-2 text-slate-900">
+                        <i data-lucide="shopping-cart" class="w-5 h-5 text-indigo-600"></i> Dein Warenkorb
+                    </h2>
+                    <button onclick="closeCart()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                        <i data-lucide="x" class="w-6 h-6"></i>
+                    </button>
+                </div>
+                
+                <div class="flex-1 overflow-y-auto px-6 py-6 no-scrollbar" id="cart-items-container"></div>
+
+                <div id="cart-footer" class="hidden border-t border-slate-100 p-6 bg-slate-50">
+                    <div class="flex justify-between items-center mb-6">
+                        <span class="text-sm font-semibold text-slate-500">Gesamtsumme</span>
+                        <span class="text-2xl font-extrabold text-slate-900" id="cart-total">0.00 €</span>
+                    </div>
+                    <button class="w-full bg-indigo-600 text-white py-4 rounded-xl text-sm font-bold hover:bg-indigo-700 transition-colors shadow-md shadow-indigo-600/20">
+                        Sicher zur Kasse gehen
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="auth-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
+        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeAuth()"></div>
+        <div class="bg-white rounded-[2rem] w-full max-w-md relative z-10 p-8 shadow-2xl animate-fadeIn transform scale-100 border border-slate-100">
+            <button onclick="closeAuth()" class="absolute top-6 right-6 text-slate-400 hover:text-slate-600 transition-colors">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            
+            <div class="text-center mb-8">
+                <div class="bg-indigo-50 w-16 h-16 rounded-2xl mx-auto flex items-center justify-center mb-4">
+                    <i data-lucide="graduation-cap" class="h-8 w-8 text-indigo-600"></i>
+                </div>
+                <h2 id="auth-title" class="text-2xl font-bold text-slate-900">Willkommen!</h2>
+                <p id="auth-subtitle" class="text-slate-500 mt-2 text-sm">Bitte logge dich ein.</p>
+            </div>
+
+            <form onsubmit="handleLogin(event)" class="space-y-4">
+                <div id="auth-register-fields" class="hidden grid-cols-2 gap-3 mb-4">
+                    <button type="button" onclick="selectRole('student')" id="btn-role-student" class="border-2 border-indigo-600 bg-indigo-50 text-indigo-700 py-2.5 rounded-xl font-bold text-xs transition-colors">Ich bin Schüler</button>
+                    <button type="button" onclick="selectRole('tutor')" id="btn-role-tutor" class="border border-slate-200 text-slate-500 py-2.5 rounded-xl font-semibold text-xs hover:bg-slate-50 transition-colors">Ich bin Student</button>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">E-Mail Adresse</label>
+                    <input type="email" required placeholder="name@beispiel.de" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-600 bg-slate-50" />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Passwort</label>
+                    <input type="password" required placeholder="••••••••" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-600 bg-slate-50" />
+                </div>
+
+                <button type="submit" id="auth-submit-btn" class="w-full bg-indigo-600 text-white py-3.5 rounded-xl font-bold hover:bg-indigo-700 transition-colors mt-6 shadow-sm shadow-indigo-600/10">
+                    Einloggen
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast-container" class="fixed bottom-6 right-6 z-50 space-y-3 pointer-events-none"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
