@@ -273,7 +273,7 @@ function addAboToCart() {
         cart.push({
             id: aboId,
             title: 'StudyShare Premium-Pass (1 Monat)',
-            price: 4.99,
+            price: 9.99,
             type: 'Abo'
         });
         updateCartUI();
@@ -462,7 +462,7 @@ function openLernsetModal(id) {
                         Einzelkauf (${set.price.toFixed(2)} €)
                     </button>
                     <button onclick="addAboToCart(); closeLernsetModal();" class="btn-paywall-sub">
-                        Premium Abo (4,99 € / mtl.)
+                        Premium Abo (9,99 € / mtl.)
                     </button>
                 </div>
             </div>
